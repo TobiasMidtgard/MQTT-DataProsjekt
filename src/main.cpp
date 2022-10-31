@@ -2,6 +2,9 @@
 /* Made by Tobias*/
 /*****************/
 
+/*
+  This program reads the sensor data and sends it to the server using the MQTT protocol.
+*/
 #include <Arduino.h>
 
 void setup()

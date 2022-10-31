@@ -1,4 +1,4 @@
 git add .
-set /P INPUT=Type input: %=%
+set /P INPUT=Commit Melding: %=%
 git commit -m %1 INPUT
 git push

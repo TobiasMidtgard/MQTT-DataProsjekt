@@ -1,3 +1,4 @@
 git add .
-git commit -m %1 "Initial commit"
+set /P INPUT=Type input: %=%
+git commit -m %1 INPUT
 git push

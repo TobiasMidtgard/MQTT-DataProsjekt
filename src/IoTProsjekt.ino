@@ -1,21 +1,3 @@
-/***************************************************************************
-  This is a library for the BME280 humidity, temperature & pressure sensor
-
-  Designed specifically to work with the Adafruit BME280 Breakout
-  ----> http://www.adafruit.com/products/2650
-
-  These sensors use I2C or SPI to communicate, 2 or 4 pins are required
-  to interface. The device's I2C address is either 0x76 or 0x77.
-
-  Adafruit invests time and resources providing this open source code,
-  please support Adafruit andopen-source hardware by purchasing products
-  from Adafruit!
-
-  Written by Limor Fried & Kevin Townsend for Adafruit Industries.
-  BSD license, all text above must be included in any redistribution
-  See the LICENSE file for details.
- ***************************************************************************/
-
 #include <Wire.h>
 #include <SPI.h>
 #include <Adafruit_Sensor.h>
@@ -72,25 +54,9 @@ void setup() {
     while(!Serial);    // time to get serial running
     Serial.println(F("BME280 test"));
 
-    //unsigned status;
-
-    espState.initialiseBme();
-    // default settings
-    /*status = bme.begin(0x76);  
-    
-    if (!status) {
-        Serial.println("Could not find a valid BME280 sensor, check wiring, address, sensor ID!");
-        Serial.print("SensorID was: 0x"); Serial.println(bme.sensorID(),16);
-        Serial.print("        ID of 0xFF probably means a bad address, a BMP 180 or BMP 085\n");
-        Serial.print("   ID of 0x56-0x58 represents a BMP 280,\n");
-        Serial.print("        ID of 0x60 represents a BME 280.\n");
-        Serial.print("        ID of 0x61 represents a BME 680.\n");
-        while (1) delay(10);
-    }*/
-    
+    espState.initialiseBme(); // BME sensor startup
+       
     Serial.println("-- Default Test --");
-    
-
     Serial.println();
 
   ubidots.setDebug(true);  // uncomment this to make debug messages available
@@ -158,7 +124,7 @@ void seccureUbidotsConnection()
 
 
 
-void changeStateTo(int state)
+void changeStateTo(int state) // Function used for changing esp state
 {
   int stateCheck = currentState;
   Serial.print("State changed from ");
@@ -166,12 +132,14 @@ void changeStateTo(int state)
   currentState = state;
   Serial.print(" to ");
   Serial.print(state);
+  Serial.print("Temperature: ");
+  Serial.println(temperature);
   
-  if(stateCheck != currentState)
+  if(stateCheck != currentState) // Push to ubidots when esp in a new state
   {
     ubidots.add(VARIABLE_LABEL_TEMP, temperature); // Inserting variable-label and temperaturevalue to ubidots
     ubidots.publish(DEVICE_LABEL); // Inserting which device on ubidots it should be published to
     ubidots.loop();
   }
-  myTimer.start(5000);
+  myTimer.start(5000); // Timer to reduce bme total measurements
 }

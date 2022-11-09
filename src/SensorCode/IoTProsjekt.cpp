@@ -40,7 +40,6 @@ static const char *VARIABLE_LABEL2 = "H";
 static const char *VARIABLE_LABEL_SUBSCRIBE = "relay";
 static const char *VARIABLE_LABEL_TEMP = "temperatur";
 
-//? Establishes a connection with ubidots?
 Ubidots ubidots(UBIDOTS_TOKEN);
 
 // System states
@@ -48,16 +47,91 @@ const int S_IDLE = 0;
 const int S_TEMP_TOO_LOW = 1;
 const int S_TEMP_TOO_HIGH = 2;
 
-// Sets the starting state to idle
+// Starting system state
 int currentState = S_IDLE;
 
 // Defining variable which uses header-files.
 Timer myTimer;
 EspState espState;
 
+// Global variable containing temperature and humidity measurement
 float temperature;
+float humidity;
 
-// Checks if the message has arrived
+void setup()
+{
+  Serial.begin(115200);
+  while (!Serial)
+    ; // time to get serial running
+  Serial.println(F("BME280 test"));
+
+  espState.initialiseBme(); // Connecting bme-sensor to esp32
+
+  Serial.println("-- Default Test --");
+  Serial.println();
+
+  ubidots.setDebug(true);
+  ubidots.connectToWifi(WIFI_SSID, WIFI_PASS);
+  ubidots.setCallback(callback);
+  ubidots.setup();
+  ubidots.reconnect();
+}
+
+void loop()
+{
+  switch (currentState)
+  {
+
+  case S_IDLE:
+
+    if (myTimer.bmeHasExpired())
+    {
+      seccureUbidotsConnection();
+      temperature = espState.readTemp();
+      humidity = espState.readHumidity();
+      changeStateTo(espState.newState());
+      if (myTimer.publishHasExpired())
+      {
+        publishVariables();
+      }
+    }
+
+    break;
+
+  case S_TEMP_TOO_LOW:
+
+    if (myTimer.bmeHasExpired())
+    {
+      seccureUbidotsConnection();
+      temperature = espState.readTemp();
+      humidity = espState.readHumidity();
+      changeStateTo(espState.newState());
+      if (myTimer.publishHasExpired())
+      {
+        publishVariables();
+      }
+    }
+
+    break;
+
+  case S_TEMP_TOO_HIGH:
+
+    if (myTimer.bmeHasExpired())
+    {
+      seccureUbidotsConnection();
+      temperature = espState.readTemp();
+      humidity = espState.readHumidity();
+      changeStateTo(espState.newState());
+      if (myTimer.publishHasExpired())
+      {
+        publishVariables();
+      }
+    }
+
+    break;
+  }
+}
+
 void callback(char *topic, byte *payload, unsigned int length)
 {
   Serial.print("Message arrived [");
@@ -79,97 +153,40 @@ void seccureUbidotsConnection()
   }
 }
 
-// Changes the esp state dependent on the temperature of the sensor
+// Function publishing variables to ubidots when timer is completed
+void publishVariables()
+{
+  ubidots.add(VARIABLE_LABEL_TEMP, temperature);  // Inserting variable-label and temperaturevalue to ubidots
+  ubidots.add(VARIABLE_LABEL_HUMIDITY, humidity); // Inserting humidityvalue
+  ubidots.publish(DEVICE_LABEL);                  // Inserting which device on ubidots it should be published to
+  ubidots.loop();
+  Serial.print("Temperature: ");
+  Serial.print(temperature);
+}
+
+// Function changing esp state, instantly publishes variables when state is changed to a new one.
 void changeStateTo(int state)
 {
-  int stateCheck = currentState;
-  Serial.print("State changed from ");
-  Serial.print(currentState);
-  currentState = state;
-  Serial.print(" to ");
-  Serial.print(state);
-  Serial.print("Temperature: ");
-  Serial.println(temperature);
-
-  // Push to ubidots when esp in a new state
-  if (stateCheck != currentState)
+  if (currentState != state)
   {
-    // Inserting variable-label and temperaturevalue to ubidots
-    ubidots.add(VARIABLE_LABEL_TEMP, temperature);
-    // Inserting which device on ubidots it should be published to
-    ubidots.publish(DEVICE_LABEL);
+    Serial.print("State changed from ");
+    Serial.print(currentState);
+    currentState = state;
+    Serial.print(" to ");
+    Serial.print(state);
+    Serial.println();
+    Serial.print("Temperature: ");
+    Serial.print(temperature);
+    Serial.println(" °C");
+    Serial.print("Humidity: ");
+    Serial.print(humidity);
+    Serial.println(" %");
+
+    ubidots.add(VARIABLE_LABEL_TEMP, temperature);  // Inserting variable-label and temperaturevalue to ubidots
+    ubidots.add(VARIABLE_LABEL_HUMIDITY, humidity); // Inserting humidityvalue
+    ubidots.publish(DEVICE_LABEL);                  // Inserting which device on ubidots it should be published to
     ubidots.loop();
   }
-  // Timer to reduce bme total measurements
-  myTimer.start(5000);
-}
-
-void setup()
-{
-  Serial.begin(115200);
-  // Waits to establish a serial connection
-  while (!Serial)
-    ;
-  // After a serial connection is established print a confirmation message
-  Serial.println(F("BME280 test"));
-
-  // Connects the ESP to the ubidots server
-  ubidots.setDebug(true);
-  ubidots.connectToWifi(WIFI_SSID, WIFI_PASS);
-  ubidots.setCallback(callback);
-  ubidots.setup();
-  ubidots.reconnect();
-  ubidots.subscribeLastValue(DEVICE_LABEL, VARIABLE_LABEL_SUBSCRIBE);
-
-  espState.initialiseBme(); // BME sensor startup
-
-  Serial.println("-- Default Test --");
-  Serial.println();
-}
-
-void loop()
-{
-  // switch case to change the state of the ESP
-  switch (currentState)
-  {
-
-  // Everything is alright
-  case S_IDLE:
-  {
-    if (myTimer.hasExpired())
-    {
-      seccureUbidotsConnection();
-      temperature = espState.readTemp();
-      changeStateTo(espState.newState());
-    }
-  }
-
-  break;
-
-  // Too low temperature
-  case S_TEMP_TOO_LOW:
-  {
-    if (myTimer.hasExpired())
-    {
-      seccureUbidotsConnection();
-      temperature = espState.readTemp();
-      changeStateTo(espState.newState());
-    }
-  }
-
-  break;
-
-  // Too high temperature
-  case S_TEMP_TOO_HIGH:
-  {
-    if (myTimer.hasExpired())
-    {
-      seccureUbidotsConnection();
-      temperature = espState.readTemp();
-      changeStateTo(espState.newState());
-    }
-  }
-
-  break;
-  }
+  myTimer.bmeStart(5000); // Timer to reduce bme total measurements.
+  myTimer.publishStart(10000);
 }

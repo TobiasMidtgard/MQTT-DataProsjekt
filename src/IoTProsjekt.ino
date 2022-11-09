@@ -4,6 +4,7 @@
 #include "timer.h"
 #include "decideEspState.h"
 
+
 const char *UBIDOTS_TOKEN = "BBFF-2OYFDrW6Ts35uxYLMaOyNgkfW1ZOKw";  // Ubidots TOKEN
 const char *WIFI_SSID = "Adam sin iPhone";      // Wi-Fi SSID
 const char *WIFI_PASS = "adam0115";      // Wi-Fi password
@@ -45,7 +46,8 @@ void setup()
   ubidots.setCallback(callback);
   ubidots.setup();
   ubidots.reconnect();
-  
+  myTimer.bmeStart(1000);
+  myTimer.publishStart(5000);
 }
 
 
@@ -62,11 +64,10 @@ void loop()
       temperature = espState.readTemp();
       humidity = espState.readHumidity();
       changeStateTo(espState.newState());
-        if(myTimer.publishHasExpired())
-        {
-          publishVariables();
-        }
-    
+      if(myTimer.publishHasExpired())
+       {
+         publishVariables();
+       }
     }
 
   break;
@@ -79,10 +80,10 @@ void loop()
       temperature = espState.readTemp();
       humidity = espState.readHumidity();
       changeStateTo(espState.newState());
-        if(myTimer.publishHasExpired())
-        {
-          publishVariables();
-        }
+      if(myTimer.publishHasExpired())
+      {
+        publishVariables();
+      }
     }
 
   break;
@@ -138,7 +139,11 @@ void publishVariables()
   ubidots.loop();
   Serial.print("Temperature: ");
   Serial.print(temperature);
-  
+  Serial.println(" °C");
+  Serial.print("Humidity: ");
+  Serial.print(humidity);
+  Serial.println(" %");
+  myTimer.publishStart(10000);
 }
 
 // Function changing esp state, instantly publishes variables when state is changed to a new one. 
@@ -164,14 +169,5 @@ void changeStateTo(int state)
   ubidots.publish(DEVICE_LABEL); // Inserting which device on ubidots it should be published to
   ubidots.loop();
   }
-  myTimer.bmeStart(5000); // Timer to reduce bme total measurements.
-  myTimer.publishStart(10000);
+  myTimer.bmeStart(2000); // Timer to reduce bme total measurements.
 }
-
-
-
-
-
-
-
-

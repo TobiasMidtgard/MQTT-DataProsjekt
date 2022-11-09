@@ -13,23 +13,34 @@
 /*--------------------------------------------------------*/
 
 #include "timer.h"
-#include "common.h"
 
 // Timer-Classfunction to start a timer.
-void Timer::start(int timeout)
+void Timer::bmeStart(int timeout)
+ {
+  bmeNextTimeout = millis() + timeout;
+ }
+
+void Timer::publishStart(int timeout)
 {
-  nextTimeout = millis() + timeout;
+  publishNextTimeout = millis() + timeout;
 }
 
 // Timer-Classfunction to check if a started timer is expired.
-bool Timer::hasExpired()
+bool Timer::bmeHasExpired()
 {
-  bool timerExpired = (millis() > nextTimeout);
+  bool timerExpired = (millis() > bmeNextTimeout);
+  return timerExpired;
+}
+
+bool Timer::publishHasExpired()
+{
+  bool timerExpired = (millis() > publishNextTimeout);
   return timerExpired;
 }
 
 // Declaring private variable for the Timer-class
 Timer::Timer()
 {
-  unsigned long nextTimeout = 0;
+  unsigned long bmeNextTimeout = 0;
+  unsigned long publishNextTimeout = 0;
 }

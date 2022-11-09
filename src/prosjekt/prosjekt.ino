@@ -90,7 +90,6 @@ void setup() {
 
   timeClient.begin();
   timeClient.setTimeOffset(3600);
-*/
   display.clearDisplay();
   display.setCursor(0, 10);
   write("ready");

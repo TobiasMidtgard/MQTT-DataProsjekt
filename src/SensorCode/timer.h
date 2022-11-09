@@ -7,11 +7,13 @@
 // Class declaration of the Timer-Class.
 class Timer
 {
-public:
-  bool hasExpired();
-  void start(int timeout);
-  Timer();
-
-private:
-  unsigned long nextTimeout;
+  public:
+    bool bmeHasExpired();
+    bool publishHasExpired();
+    void bmeStart(int timeout);
+    void publishStart(int timeout);
+    Timer();
+   private:
+    unsigned long bmeNextTimeout;
+    unsigned long publishNextTimeout;
 };

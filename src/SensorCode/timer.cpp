@@ -8,8 +8,8 @@
 /*   -                                                    */
 /*--------------------------------------------------------*/
 /*                                                        */
-/* This code check which state the program should be in   */
-/* depending on the temperature the sensor has messured.  */
+/* This program keeps the time and chekcs if    */
+/*   */
 /*--------------------------------------------------------*/
 
 #include "timer.h"

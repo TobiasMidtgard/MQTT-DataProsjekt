@@ -163,7 +163,8 @@ void publishVariables()
 
 void publishVariableAlarm()
 {
- ubidots.add(VARIABLE_LABEL_TEMPALARM, temperature);
+ int mottakerVariabel = 11; // 11: mottakersiden som tar imot denne variabelen for å utløse en alarm.
+ ubidots.add(VARIABLE_LABEL_TEMPALARM, mottakerVariabel); 
  ubidots.publish(DEVICE_LABEL_ALARM);
  ubidots.loop();
  myTimer.alarmStart(30000); // Timer to reduce amount of transmissions to alarm

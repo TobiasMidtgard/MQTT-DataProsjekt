@@ -10,10 +10,13 @@ class Timer
   public:
     bool bmeHasExpired();
     bool publishHasExpired();
+    bool alarmTimerExpired();
     void bmeStart(int timeout);
     void publishStart(int timeout);
+    void alarmStart(int timeout);
     Timer();
    private:
-    unsigned long bmeNextTimeout;
-    unsigned long publishNextTimeout;
+    unsigned long bmeTimeout;
+    unsigned long publishTimeout;
+    unsigned long alarmTimeout;
 };

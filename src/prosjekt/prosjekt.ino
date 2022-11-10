@@ -19,8 +19,8 @@ const char* device_sub = "esp32";
 const char* VARIABLE_LABEL_TEMP = "temperatur";
 const char* VARIABLE_LABEL_HUMIDITY = "fuktighet";
 
-const char* device_pub = "";
-const char* variable_pub = "";
+const char* device_pub = "esp32";
+const char* variable_pub = "request";
 
 unsigned long previous_time = 0;
 
@@ -120,6 +120,8 @@ void loop() {
   while (digitalRead(button) == HIGH) {
     while (digitalRead(button) == HIGH);
     //request readings
+    ubidots.add(variable_pub, "retrieve");
+    ubidots.publish(device_pub);
     delay(100);
   }
 }

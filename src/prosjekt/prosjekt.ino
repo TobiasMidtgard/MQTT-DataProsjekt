@@ -19,13 +19,6 @@ const char* device_sub = "esp32";
 const char* VARIABLE_LABEL_TEMP = "temperatur";
 const char* VARIABLE_LABEL_HUMIDITY = "fuktighet";
 
-const char* device_pub = "esp32";
-const char* variable_pub = "request";
-
-unsigned long previous_time = 0;
-
-const int button = 18;
-
 String formattedDate = "n/a";
 String lastTemp = "n/a";
 String lastHum = "n/a";
@@ -116,12 +109,4 @@ void loop() {
     ubidots.subscribeLastValue(device_sub, VARIABLE_LABEL_HUMIDITY);
   }
   ubidots.loop();
-
-  while (digitalRead(button) == HIGH) {
-    while (digitalRead(button) == HIGH);
-    //request readings
-    ubidots.add(variable_pub, "retrieve");
-    ubidots.publish(device_pub);
-    delay(100);
-  }
 }

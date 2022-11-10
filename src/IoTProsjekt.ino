@@ -11,6 +11,8 @@ const char *WIFI_PASS = "adam0115";      // Wi-Fi password
 const char *DEVICE_LABEL = "esp32";   // Device label to which data will be published
 const char *VARIABLE_LABEL_TEMP = "temperatur"; // Variable label to which temperature  will be published
 const char *VARIABLE_LABEL_HUMIDITY = "fuktighet"; // Variable label to which humidity will be published
+const char *DEVICE_LABEL_ALARM = "esp32-alarm";
+const char *VARIABLE_LABEL_TEMPALARM = "temperatur-alarm";
 
 Ubidots ubidots(UBIDOTS_TOKEN); 
 
@@ -47,7 +49,8 @@ void setup()
   ubidots.setup();
   ubidots.reconnect();
   myTimer.bmeStart(1000);
-  myTimer.publishStart(5000);
+  myTimer.publishStart(10000);
+  myTimer.alarmStart(20000);
 }
 
 
@@ -84,6 +87,10 @@ void loop()
       {
         publishVariables();
       }
+      if(myTimer.alarmTimerExpired())
+      {
+        publishVariableAlarm();
+      }
     }
 
   break;
@@ -96,10 +103,18 @@ void loop()
       temperature = espState.readTemp();
       humidity = espState.readHumidity();
       changeStateTo(espState.newState());
+      Serial.println("Test1");
       if(myTimer.publishHasExpired())
       {
+        Serial.println("Test2");
         publishVariables();
       }
+      if(myTimer.alarmTimerExpired())
+      {
+        Serial.println("Test3");
+        publishVariableAlarm();
+      }
+      Serial.println("Test4");
     }
 
   break;
@@ -143,7 +158,15 @@ void publishVariables()
   Serial.print("Humidity: ");
   Serial.print(humidity);
   Serial.println(" %");
-  myTimer.publishStart(10000);
+  myTimer.publishStart(10000); // Timer to reduce publishments to ubidots.
+}
+
+void publishVariableAlarm()
+{
+ ubidots.add(VARIABLE_LABEL_TEMPALARM, temperature);
+ ubidots.publish(DEVICE_LABEL_ALARM);
+ ubidots.loop();
+ myTimer.alarmStart(30000); // Timer to reduce amount of transmissions to alarm
 }
 
 // Function changing esp state, instantly publishes variables when state is changed to a new one. 
@@ -168,6 +191,7 @@ void changeStateTo(int state)
   ubidots.add(VARIABLE_LABEL_HUMIDITY, humidity); // Inserting humidityvalue
   ubidots.publish(DEVICE_LABEL); // Inserting which device on ubidots it should be published to
   ubidots.loop();
+  myTimer.alarmStart(30000);
   }
   myTimer.bmeStart(2000); // Timer to reduce bme total measurements.
 }

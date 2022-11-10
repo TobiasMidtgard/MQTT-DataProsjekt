@@ -17,30 +17,42 @@
 // Timer-Classfunction to start a timer.
 void Timer::bmeStart(int timeout)
  {
-  bmeNextTimeout = millis() + timeout;
+  bmeTimeout = millis() + timeout;
  }
 
 void Timer::publishStart(int timeout)
 {
-  publishNextTimeout = millis() + timeout;
+  publishTimeout = millis() + timeout;
+}
+
+void Timer::alarmStart(int timeout)
+{
+  alarmTimeout = millis() + timeout;
 }
 
 // Timer-Classfunction to check if a started timer is expired.
 bool Timer::bmeHasExpired()
 {
-  bool timerExpired = (millis() > bmeNextTimeout);
+  bool timerExpired = (millis() > bmeTimeout);
   return timerExpired;
 }
 
 bool Timer::publishHasExpired()
 {
-  bool timerExpired = (millis() > publishNextTimeout);
+  bool timerExpired = (millis() > publishTimeout);
+  return timerExpired;
+}
+
+bool Timer::alarmTimerExpired()
+{
+  bool timerExpired = (millis() > alarmTimeout);
   return timerExpired;
 }
 
 // Declaring private variable for the Timer-class
 Timer::Timer()
 {
-  unsigned long bmeNextTimeout = 0;
-  unsigned long publishNextTimeout = 0;
+  unsigned long bmeTimeout = 0;
+  unsigned long publishTimeout = 0;
+  unsigned long alarmTimeout = 0;
 }

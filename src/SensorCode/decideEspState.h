@@ -26,14 +26,22 @@ class EspState
 {
   // Public variables
 public:
-  float readTemp();
+  float readTemp(int totalTempMeasurements);
+  float readHumidity(int totalMeasurements);
   int newState();
   void initialiseBme();
   Adafruit_BME280 bme;
 
   // Private variables
-private:
-  int stateVariable = 0;
+  // Temp
   float tempValue = 0;
+  float tempAverage = 0;
+  float tempSum = 0;
+  // Humidity
+  float humidityValue = 0;
+  float humiditySum = 0;
+  float humidityAverage = 0;
+  // System state
+  int stateVariable = 0;
   unsigned status;
 };

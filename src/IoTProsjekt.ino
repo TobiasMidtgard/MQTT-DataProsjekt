@@ -23,6 +23,8 @@ const int S_TEMP_TOO_HIGH = 2;
 
 // Starting system state
 int currentState = S_IDLE;
+// Previous system state
+int previousState; 
 
 // Defining variable which uses header-files.
 Timer myTimer;
@@ -71,6 +73,10 @@ void loop()
        {
          publishVariables();
        }
+      if(myTimer.alarmTimerExpired() && previousState != S_IDLE)
+      {
+        publishVariableAlarm();
+      }
     }
 
   break;
@@ -163,7 +169,22 @@ void publishVariables()
 
 void publishVariableAlarm()
 {
- int mottakerVariabel = 11; // 11: mottakersiden som tar imot denne variabelen for å utløse en alarm.
+ int mottakerVariabel;
+ if(currentState == 0)
+ {
+  mottakerVariabel = 6; // 6: reciever turns off alarm.
+  previousState = S_IDLE;
+ }
+ else if(currentState == 1)
+ {
+ mottakerVariabel = 10; // 10: reciever turns on alarm and displays system state.
+ previousState = S_TEMP_TOO_LOW;
+ }
+ else
+ {
+  mottakerVariabel = 11; // 11: reciever turns on alarm and displays system state.
+  previousState = S_TEMP_TOO_HIGH;
+ }
  ubidots.add(VARIABLE_LABEL_TEMPALARM, mottakerVariabel); 
  ubidots.publish(DEVICE_LABEL_ALARM);
  ubidots.loop();

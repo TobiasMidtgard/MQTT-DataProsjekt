@@ -1,3 +1,17 @@
+/*--------------------------------------------------------*/
+/*                                                        */
+/*      This program is apart of the IELET2001 Project    */
+/*                                                        */
+/*  The code is written by:                               */
+/*   -  Adam                                              */
+/*   -                                                    */
+/*--------------------------------------------------------*/
+/*                                                        */
+/* This is the main file and is responsable for reading   */
+/* the temperature, establishing a connection and sending */
+/* information to ubidots.                                */
+/*--------------------------------------------------------*/
+
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BME280.h>
 #include <math.h>

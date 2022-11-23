@@ -13,8 +13,8 @@
 /*--------------------------------------------------------*/
 
 // Calls for the program`s headerfile and the common file
+#include <Arduino.h>
 #include "decideEspState.h"
-#include "common.h"
 
 // Function that reads the temperature from the bme sensor
 float EspState::readTemp()

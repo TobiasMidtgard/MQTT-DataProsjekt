@@ -12,13 +12,13 @@
 /*   */
 /*--------------------------------------------------------*/
 
+#include <Arduino.h>
 #include "timer.h"
 
-// Timer-Classfunction to start a timer.
 void Timer::bmeStart(int timeout)
- {
+{
   bmeTimeout = millis() + timeout;
- }
+}
 
 void Timer::publishStart(int timeout)
 {
@@ -30,7 +30,6 @@ void Timer::alarmStart(int timeout)
   alarmTimeout = millis() + timeout;
 }
 
-// Timer-Classfunction to check if a started timer is expired.
 bool Timer::bmeHasExpired()
 {
   bool timerExpired = (millis() > bmeTimeout);

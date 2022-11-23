@@ -11,12 +11,7 @@
 #define common_h
 
 // Inludes all of the necessary libraries for the program
-#include <Arduino.h>
-#include <Wire.h>
-#include <SPI.h>
-#include <Adafruit_Sensor.h>
-#include <Adafruit_BME280.h>
-#include "UbidotsEsp32Mqtt.h"
+
 
 // Defines which header files should be included
 #include "timer.h"

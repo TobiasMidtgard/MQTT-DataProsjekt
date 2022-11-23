@@ -1,3 +1,10 @@
+/*
+Copyright (c) 2016 SparkFun Electronics
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
 #include <SPI.h>
 #include <ICM_20948.h>
 #include <Wire.h>
@@ -60,10 +67,10 @@ void callback(char* topic, byte* message, unsigned int length) {
 
   display.println(formattedDate);
 
-  if (msg.toInt() > 30) { //if the value is above '30' it is probably humidity instead of temperature
+  if (msg.toInt() > 100) { //if the value is above '100' it is probably temperature instead of humidity
     lastHum = msg;
   } else {
-    lastTemp = msg;
+    lastTemp = String(msg.toFloat() - 200.0); //removes the artificially added 200 which was added to differentiate between temperature and humidity
   }
 
   display.println("temp: " + lastTemp + "C");

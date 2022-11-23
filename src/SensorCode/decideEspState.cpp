@@ -17,10 +17,30 @@
 #include "decideEspState.h"
 
 // Function that reads the temperature from the bme sensor
-float EspState::readTemp()
+float EspState::readTemp(int totalMeasurements)
 {
-  tempValue = bme.readTemperature();
-  return tempValue;
+  tempValue = 0;
+  tempSum = 0;
+  for (int i = 0; i<totalMeasurements; i++)
+  {
+   tempValue = bme.readTemperature();
+   tempSum += tempValue;
+  }
+  tempAverage = round(tempSum/totalMeasurements);
+  return tempAverage;
+}
+
+float EspState::readHumidity(int totalMeasurements)
+{
+  humidityValue = 0;
+  humiditySum = 0;
+  for (int i = 0; i<totalMeasurements; i++)
+  {
+    humidityValue = bme.readHumidity();
+    humiditySum += humidityValue;
+  }
+  humidityAverage = humiditySum/totalMeasurements;
+  return humidityAverage;
 }
 
 // a function to initialise the bme sensor and prints information to the seriial monitor.
@@ -46,13 +66,13 @@ void EspState::initialiseBme()
 int EspState::newState()
 {
   // ESP in too cold state
-  if (tempValue < 0 and tempValue > -20)
+  if(tempAverage < 0)
   {
     stateVariable = 1;
   }
 
   // ESP in too warm state
-  else if (tempValue > 6 and tempValue < 40)
+  else if(tempAverage > 12)
   {
     stateVariable = 2;
   }

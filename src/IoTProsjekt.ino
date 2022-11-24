@@ -41,8 +41,10 @@ int currentState = S_IDLE;
 // Previous system state
 int previousState; 
 
-// Defining variable which uses header-files.
-Timer myTimer;
+// Defining instances of classes
+Timer bmeTimer;
+Timer publishTimer;
+Timer alarmTimer;
 EspState espState;
 
 // Global variable containing temperature and humidity measurement
@@ -65,9 +67,9 @@ void setup()
   ubidots.setCallback(callback);
   ubidots.setup();
   ubidots.reconnect();
-  myTimer.bmeStart(1000);
-  myTimer.publishStart(10000);
-  myTimer.alarmStart(20000);
+  bmeTimer.start(1000);
+  publishTimer.start(5000);
+  alarmTimer.start(15000);
 }
 
 
@@ -80,17 +82,17 @@ void loop()
 
   case S_IDLE:
   
-    if(myTimer.bmeHasExpired())
+    if(bmeTimer.hasExpired())
     {
       seccureUbidotsConnection();
       temperature = espState.readTemp(totalMeasurements);
       humidity = espState.readHumidity(totalMeasurements);
       changeStateTo(espState.newState());
-      if(myTimer.publishHasExpired())
+      if(publishTimer.hasExpired())
        {
          publishVariables();
        }
-       if((myTimer.alarmTimerExpired()) && (previousState != S_IDLE))
+       if((alarmTimer.hasExpired()) && (previousState != S_IDLE))
        {
        publishVariableAlarm();
        }
@@ -100,17 +102,17 @@ void loop()
 
   case S_TEMP_TOO_LOW:
   
-    if(myTimer.bmeHasExpired())
+    if(bmeTimer.hasExpired())
     {
       seccureUbidotsConnection();
       temperature = espState.readTemp(totalMeasurements);
       humidity = espState.readHumidity(totalMeasurements);
       changeStateTo(espState.newState());
-      if(myTimer.publishHasExpired())
+      if(publishTimer.hasExpired())
       {
         publishVariables();
       }
-      if(myTimer.alarmTimerExpired())
+      if((alarmTimer.hasExpired()) && (previousState != S_TEMP_TOO_LOW))
       {
         publishVariableAlarm();
       }
@@ -120,17 +122,17 @@ void loop()
 
   case S_TEMP_TOO_HIGH:
   
-    if(myTimer.bmeHasExpired())
+    if(bmeTimer.hasExpired())
     {
       seccureUbidotsConnection();
       temperature = espState.readTemp(totalMeasurements);
       humidity = espState.readHumidity(totalMeasurements);
       changeStateTo(espState.newState());
-      if(myTimer.publishHasExpired())
+      if(publishTimer.hasExpired())
       {
         publishVariables();
       }
-      if(myTimer.alarmTimerExpired())
+      if((alarmTimer.hasExpired()) && (previousState != S_TEMP_TOO_HIGH))
       {
         publishVariableAlarm();
       }
@@ -176,7 +178,7 @@ void publishVariables()
   Serial.print("Humidity: ");
   Serial.print(humidity);
   Serial.println(" %");
-  myTimer.publishStart(30000); // Timer to reduce publishments to ubidots.
+  publishTimer.start(5000); // Timer to reduce publishments to ubidots.
 }
 
 void publishVariableAlarm()
@@ -184,22 +186,22 @@ void publishVariableAlarm()
  int mottakerVariabel;
  if(currentState == 0)
  {
-  mottakerVariabel = 6; // 6: reciever turns off alarm.
+  mottakerVariabel = 0; // 0: reciever turns off alarm.
   previousState = S_IDLE;
  }
  else if(currentState == 1)
  {
- mottakerVariabel = 10; // 10: reciever turns on alarm and displays system state.
+ mottakerVariabel = 1; // 1: reciever turns on alarm and displays system state.
  previousState = S_TEMP_TOO_LOW;
  }
  else
  {
-  mottakerVariabel = 11; // 11: reciever turns on alarm and displays system state.
+  mottakerVariabel = 1; // 1: reciever turns on alarm and displays system state.
   previousState = S_TEMP_TOO_HIGH;
  }
  ubidots.add(VARIABLE_LABEL_TEMPALARM, mottakerVariabel); 
  ubidots.publish(DEVICE_LABEL_ALARM);
- myTimer.alarmStart(60000); // Timer to reduce amount of transmissions to alarm
+ alarmTimer.start(15000); // Timer to reduce amount of transmissions to alarm
 }
 
 // Function changing esp state, instantly publishes variables when state is changed to a new one. 
@@ -223,7 +225,7 @@ void changeStateTo(int state)
   ubidots.add(VARIABLE_LABEL_TEMP, temperature); // Inserting variable-label and temperaturevalue to ubidots
   ubidots.add(VARIABLE_LABEL_HUMIDITY, humidity); // Inserting humidityvalue
   ubidots.publish(DEVICE_LABEL); // Inserting which device on ubidots it should be published to
-  myTimer.alarmStart(5000);
+  alarmTimer.start(15000);
   }
-  myTimer.bmeStart(5000); // Timer to reduce bme total measurements.
+  bmeTimer.start(5000); // Timer to reduce bme total measurements.
 }

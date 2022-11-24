@@ -60,17 +60,20 @@ public:
 
   // Renames the library class to bme
   Adafruit_BME280 bme;
-
-  // Private variables
-  // Temp
-  float tempValue = 0;
-  float tempAverage = 0;
-  float tempSum = 0;
-  // Humidity
-  float humidityValue = 0;
-  float humiditySum = 0;
-  float humidityAverage = 0;
-  // System state
-  int stateVariable = 0;
-  unsigned status;
+  
+  EspState();
+  
+    // Private variables
+  private:
+    // Temp
+    float tempValue;
+    int tempAverage;
+    float tempSum;
+    // Humidity
+    float humidityValue;
+    float humiditySum;
+    float humidityAverage;
+    // System state
+    int stateVariable;
+    unsigned status;
 };

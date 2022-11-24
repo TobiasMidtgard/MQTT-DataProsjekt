@@ -15,43 +15,22 @@
 #include <Arduino.h>
 #include "timer.h"
 
-void Timer::bmeStart(int timeout)
+// Timer-Classfunction to start a timer.
+void Timer::start(int timer)
 {
-  bmeTimeout = millis() + timeout;
+  timeout = millis() + timer;
 }
 
-void Timer::publishStart(int timeout)
-{
-  publishTimeout = millis() + timeout;
-}
-
-void Timer::alarmStart(int timeout)
-{
-  alarmTimeout = millis() + timeout;
-}
-
-bool Timer::bmeHasExpired()
+// Timer-Classfunction to check if a started timer is expired.
+bool Timer::hasExpired()
 {
   bool timerExpired = (millis() > bmeTimeout);
   return timerExpired;
 }
 
-bool Timer::publishHasExpired()
-{
-  bool timerExpired = (millis() > publishTimeout);
-  return timerExpired;
-}
-
-bool Timer::alarmTimerExpired()
-{
-  bool timerExpired = (millis() > alarmTimeout);
-  return timerExpired;
-}
 
 // Declaring private variable for the Timer-class
 Timer::Timer()
 {
-  unsigned long bmeTimeout = 0;
-  unsigned long publishTimeout = 0;
-  unsigned long alarmTimeout = 0;
+  unsigned long timeout = 0;
 }

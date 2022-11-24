@@ -84,3 +84,19 @@ int EspState::newState()
   }
   return stateVariable;
 }
+
+// Declaring private variable for the ESP-class
+EspState::EspState()
+{
+  // Temp
+    float tempValue = 0;
+    int tempAverage = 0;
+    float tempSum = 0;
+    // Humidity
+    float humidityValue = 0;
+    float humiditySum = 0;
+    float humidityAverage = 0;
+    // System state
+    int stateVariable = 0;
+    unsigned status;
+}

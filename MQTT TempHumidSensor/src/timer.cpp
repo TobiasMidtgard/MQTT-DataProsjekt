@@ -7,7 +7,7 @@
 /*   -                                                    */
 /*--------------------------------------------------------*/
 /*                                                        */
-/* This program keeps the time and chekcs if    */
+/* This program creates the timer-class functions meaning.*/
 /*   */
 /*--------------------------------------------------------*/
 

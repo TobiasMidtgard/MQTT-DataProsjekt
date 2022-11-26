@@ -24,7 +24,7 @@ void Timer::start(int timer)
 // Timer-Classfunction to check if a started timer is expired.
 bool Timer::hasExpired()
 {
-  bool timerExpired = (millis() > bmeTimeout);
+  bool timerExpired = (millis() > timeout);
   return timerExpired;
 }
 

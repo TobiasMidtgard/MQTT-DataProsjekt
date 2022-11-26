@@ -1,3 +1,15 @@
+/*--------------------------------------------------------*/
+/*                                                        */
+/*      This program is apart of the IELET2001 Project    */
+/*                                                        */
+/*  The code is written by:                               */
+/*   -  Adam                                              */
+/*   -                                                    */
+/*--------------------------------------------------------*/
+/*                                                        */
+/* This program creates the timer-class and declares      */
+/*  functions and variables.                              */
+/*--------------------------------------------------------*/
 
 #pragma once
 

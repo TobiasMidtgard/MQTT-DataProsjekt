@@ -20,15 +20,16 @@
 #include "decideEspState.h"
 
 
-const char *UBIDOTS_TOKEN = "BBFF-2OYFDrW6Ts35uxYLMaOyNgkfW1ZOKw";  // Ubidots TOKEN
-const char *WIFI_SSID = "PF14";      // Wi-Fi SSID
-const char *WIFI_PASS = "ZdFiBppx";      // Wi-Fi password
+const char *UBIDOTS_TOKEN = "";  // Ubidots TOKEN
+const char *WIFI_SSID = "";      // Wi-Fi SSID
+const char *WIFI_PASS = "";      // Wi-Fi password
 const char *DEVICE_LABEL = "esp32";   // Device label to which data will be published
+const char *DEVICE_LABEL_ALARM = "esp32-alarm";
 const char *VARIABLE_LABEL_TEMP = "temperatur"; // Variable label to which temperature  will be published
 const char *VARIABLE_LABEL_HUMIDITY = "fuktighet"; // Variable label to which humidity will be published
-const char *DEVICE_LABEL_ALARM = "esp32-alarm";
 const char *VARIABLE_LABEL_TEMPALARM = "temperatur-alarm";
 
+//Declaring ubidots-token to ubidots-library
 Ubidots ubidots(UBIDOTS_TOKEN); 
 
 // System states
@@ -64,20 +65,18 @@ void setup()
 
   ubidots.setDebug(true); 
   ubidots.connectToWifi(WIFI_SSID, WIFI_PASS);
-  ubidots.setCallback(callback);
   ubidots.setup();
   ubidots.reconnect();
-  bmeTimer.start(1000);
-  publishTimer.start(5000);
-  alarmTimer.start(15000);
+  bmeTimer.start(1000); // 1 second timer for bme-sensor
+  publishTimer.start(5000); // 5 seconds timer for publishment to screen  
 }
 
 
 void loop()
 { 
  ubidots.loop();
- int totalMeasurements = 50;
- switch(currentState)
+ int totalMeasurements = 50; // Average measurement of 50 measurements.
+ switch(currentState) 
  {
 
   case S_IDLE:
@@ -143,20 +142,6 @@ void loop()
  }
 }
 
-
-
-void callback(char *topic, byte *payload, unsigned int length)
-{
-  Serial.print("Message arrived [");
-  Serial.print(topic);
-  Serial.print("] ");
-  for (int i = 0; i < length; i++)
-  {
-    Serial.print((char)payload[i]);
-  }
-  Serial.println();
-}
-
 // Function seccuring connection between esp32 and ubidots
 void seccureUbidotsConnection()
 {
@@ -166,7 +151,7 @@ void seccureUbidotsConnection()
   }
 }
 
-// Function publishing variables to ubidots when timer is completed
+// Function used for publishing variables to ubidots, which transfers the variables to the screen.
 void publishVariables() 
 {
   ubidots.add(VARIABLE_LABEL_TEMP, temperature); // Inserting variable-label and temperaturevalue to ubidots
@@ -181,6 +166,7 @@ void publishVariables()
   publishTimer.start(5000); // Timer to reduce publishments to ubidots.
 }
 
+// Function used for publishing variables to ubidots, which transfers the variables to alarmsystem.
 void publishVariableAlarm()
 {
  int mottakerVariabel;
@@ -204,7 +190,7 @@ void publishVariableAlarm()
  alarmTimer.start(15000); // Timer to reduce amount of transmissions to alarm
 }
 
-// Function changing esp state, instantly publishes variables when state is changed to a new one. 
+// Function changing esp state, instantly publishes variables to screen when state is changed to a new one. 
 void changeStateTo(int state)
 {
   if(currentState != state)

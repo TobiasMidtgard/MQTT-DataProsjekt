@@ -1,5 +1,5 @@
 # MQTT-DataProsjekt
-Dette  er kodebasen til prosjektet om MQTT i datateknologi IELET2001 til gruppe 3.
+Dette  er kodebasen til prosjektet om MQTT i IELET2001 til gruppe 3.
 
 Prosjektet er designet for bruk av Platformio, dersom en ønsker å benytte seg av
 Arduino IDE-en, kan man endre navnet på main filene fra main.cpp til main.ino.

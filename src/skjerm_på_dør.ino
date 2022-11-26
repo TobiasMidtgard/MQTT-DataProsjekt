@@ -30,7 +30,7 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 const char* ssid = "wifiName";
 const char* password = "password";
 
-const char* UBIDOTS_TOKEN = "BBFF-2OYFDrW6Ts35uxYLMaOyNgkfW1ZOKw";
+const char* UBIDOTS_TOKEN = "BBFF-tiXYhoORGOAzVHV09jkY8lPcImrlDk";
 const char* DEVICE_LABEL = "esp32";
 const char* DEVICE_LABEL_ALARM = "esp32-alarm";
 const char* VARIABLE_LABEL_TEMP = "temperatur";
@@ -181,15 +181,15 @@ void loop() {
 
       if (abs(z_base - z) < 10) { //if the angle gives a value lower than 10 the door is most likely closed
         if (opened) {
-          ubidots.add(VARIABLE_LABEL_DOOR, 6); //'6' is a signal meaning that the door is closed and the alarm should stop
+          ubidots.add(VARIABLE_LABEL_DOOR, 0); //'0' is a signal meaning that the door is closed and the alarm should stop
           ubidots.publish(DEVICE_LABEL_ALARM);
         }
         opened = false;
       }
 
       if (abs(z_base - z) > 20  && !opened) { //a value higher than 20 means the door is most likely open
-        if ((millis() - door_timer) > 30000) { //if door is open and it has gone 30s
-          ubidots.add(VARIABLE_LABEL_DOOR, 5); //'5' is the signal that the door has been opened
+        if ((millis() - door_timer) > 5000) { //if door is open and it has gone 5s
+          ubidots.add(VARIABLE_LABEL_DOOR, 1); //'1' is the signal that the door has been opened
           ubidots.publish(DEVICE_LABEL_ALARM);
           opened = true;
         }

@@ -59,6 +59,7 @@ void callback(char* topic, byte* message, unsigned int length) {
   formattedDate = timeClient.getFormattedDate(); //the date is only updated when new data is collected
 
   String msg;
+  String topic_label = String(topic);
   for (int i = 0; i < length; i++) {
     msg += (char)message[i];
   }
@@ -67,10 +68,11 @@ void callback(char* topic, byte* message, unsigned int length) {
 
   display.println(formattedDate);
 
-  if (msg.toInt() > 100) { //if the value is above '100' it is probably temperature instead of humidity
+  if (topic_label.length() == 32) {
     lastHum = msg;
-  } else {
-    lastTemp = String(msg.toFloat() - 200.0); //removes the artificially added 200 which was added to differentiate between temperature and humidity
+  }
+  else if (topic_label.length() == 33) {
+    lastTemp = msg;
   }
 
   display.println("temp: " + lastTemp + "C");

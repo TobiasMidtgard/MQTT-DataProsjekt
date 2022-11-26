@@ -14,7 +14,6 @@
 
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BME280.h>
-#include <math.h>
 #include "UbidotsEsp32Mqtt.h"
 #include "timer.h"
 #include "decideEspState.h"

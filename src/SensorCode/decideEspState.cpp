@@ -16,8 +16,8 @@
 #include <Arduino.h>
 #include "decideEspState.h"
 
-// Function that reads the temperature from the bme sensor
-float EspState::readTemp(int totalMeasurements)
+// Function that reads the temperature from the bme sensor, and returns average temperature from totalMeasurements.
+int EspState::readTemp(int totalMeasurements)
 {
   tempValue = 0;
   tempSum = 0;
@@ -26,10 +26,11 @@ float EspState::readTemp(int totalMeasurements)
    tempValue = bme.readTemperature();
    tempSum += tempValue;
   }
-  tempAverage = round(tempSum/totalMeasurements);
+  tempAverage = tempSum/totalMeasurements;
   return tempAverage;
 }
 
+// Function that reads the humidity from the bme sensor, and returns average humidity from totalMeasurements.
 float EspState::readHumidity(int totalMeasurements)
 {
   humidityValue = 0;
@@ -43,7 +44,7 @@ float EspState::readHumidity(int totalMeasurements)
   return humidityAverage;
 }
 
-// a function to initialise the bme sensor and prints information to the seriial monitor.
+// a function to initialise the bme sensor and prints information to the serial monitor.
 void EspState::initialiseBme()
 {
   status = bme.begin(0x76);
@@ -85,7 +86,7 @@ int EspState::newState()
   return stateVariable;
 }
 
-// Declaring private variable for the ESP-class
+// Declaring private variable for the EspState-class
 EspState::EspState()
 {
   // Temp

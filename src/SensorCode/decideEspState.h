@@ -47,7 +47,7 @@ public:
    * @return Alarm state
    */
 =======
-  float readTemp(int totalTempMeasurements);
+  int readTemp(int totalTempMeasurements);
   float readHumidity(int totalMeasurements);
 >>>>>>> bdcbcdaff23af17ba0aaaf28d47674c8e1e6785e
   int newState();
